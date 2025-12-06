@@ -1,3 +1,5 @@
+name: Application Deployment To EKS
+
 on:
   push:
     branches:
@@ -7,6 +9,7 @@ on:
 jobs:
   docker_build:
     name: Build, Test & Push to DockerHub
+    environment: test
     runs-on: ubuntu-latest
 
     steps:
