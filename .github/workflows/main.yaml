@@ -30,7 +30,7 @@ jobs:
         run: |
           AUX_IMAGE=${{ env.DOCKER_USER }}/aux-service
           
-          # Build image from the aux-service directory using its specific Dockerfile
+  
           docker build . --file auxiliary-service/Dockerfile -t ${AUX_IMAGE}:latest -t ${AUX_IMAGE}:${{ env.RUN_TAG }}
           
           # Push both tags
@@ -41,7 +41,6 @@ jobs:
         run: |
           MAIN_IMAGE=${{ env.DOCKER_USER }}/main-service
 
-          # Build image from the main-api directory using its specific Dockerfile
           docker build . --file main-api/Dockerfile -t ${MAIN_IMAGE}:latest -t ${MAIN_IMAGE}:${{ env.RUN_TAG }}
           
           # Push both tags
@@ -62,7 +61,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Install Trivy # FIX 1: Reliable installation method
+      - name: Install Trivy
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.43.0
           trivy --version
@@ -71,10 +70,10 @@ jobs:
         run: |
           AUX_IMAGE=${{ env.DOCKER_USER }}/aux-service 
           echo "Scanning auxiliary-service:${{ env.RUN_TAG }}"
-          trivy image --severity HIGH,CRITICAL --format table ${AUX_IMAGE}:${{ env.RUN_TAG }}
+          trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/main-service:${{ github.run_number }}
         
       - name: Scan Main API Service Image (main-service)
         run: |
           MAIN_IMAGE=${{ env.DOCKER_USER }}/main-service
           echo "Scanning main-service:${{ env.RUN_TAG }}"
-          trivy image --severity HIGH,CRITICAL --format table ${MAIN_IMAGE}:${{ env.RUN_TAG }}
+          trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/aux-service:${{ github.run_number }}
