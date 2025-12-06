@@ -52,30 +52,21 @@ jobs:
     name: Scan Docker Images for Vulnerabilities
     needs: [docker_build]
     runs-on: ubuntu-latest
-
+    
     env:
       DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
       RUN_TAG: ${{ github.run_number }}
       
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Install Trivy
-        run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.43.0
-          trivy --version # Verify installation
 
       - name: Scan Auxiliary Service Image (aux-service)
         run: |
-          AUX_IMAGE=${{ env.DOCKER_USER }}/aux-service
-          
+          AUX_IMAGE=${{ env.DOCKER_USER }}/aux-service 
           echo "Scanning auxiliary-service:${{ env.RUN_TAG }}"
           trivy image --severity HIGH,CRITICAL --format table ${AUX_IMAGE}:${{ env.RUN_TAG }}
-
+        
       - name: Scan Main API Service Image (main-service)
         run: |
           MAIN_IMAGE=${{ env.DOCKER_USER }}/main-service
-          
           echo "Scanning main-service:${{ env.RUN_TAG }}"
           trivy image --severity HIGH,CRITICAL --format table ${MAIN_IMAGE}:${{ env.RUN_TAG }}
