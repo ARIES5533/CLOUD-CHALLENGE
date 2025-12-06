@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aux-deployment
+  namespace: aux-service-ns
+  labels:
+    app: aux-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aux-service
+  template:
+    metadata:
+      labels:
+        app: aux-service
+    spec:
+      serviceAccountName: aux-service-sa
+      containers:
+      - name: aux-service
+        image: aux-service:1.0.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8001
+        env:
+        - name: AUX_SERVICE_VERSION
+          value: "1.0.0"

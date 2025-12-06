@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-deployment
+  namespace: main-service-ns
+  labels:
+    app: main-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main-service
+  template:
+    metadata:
+      labels:
+        app: main-service
+    spec:
+      containers:
+      - name: main-service
+        image: main-service:1.0.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MAIN_SERVICE_VERSION
+          value: "1.0.0"
+        # Crucial Update: Use Fully Qualified Domain Name (FQDN)
+        # Format: <service-name>.<namespace>.svc.cluster.local
+        - name: AUX_SERVICE_URL
+          value: "http://aux-service.aux-service-ns:8001" # <--- COMMUNICATION LINK UPDATED
