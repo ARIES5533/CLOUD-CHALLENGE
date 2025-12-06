@@ -68,12 +68,10 @@ jobs:
           
       - name: Scan Auxiliary Service Image (aux-service)
         run: |
-          AUX_IMAGE=${{ env.DOCKER_USER }}/aux-service 
           echo "Scanning auxiliary-service:${{ env.RUN_TAG }}"
           trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/main-service:${{ github.run_number }}
         
       - name: Scan Main API Service Image (main-service)
         run: |
-          MAIN_IMAGE=${{ env.DOCKER_USER }}/main-service
           echo "Scanning main-service:${{ env.RUN_TAG }}"
           trivy image --severity HIGH,CRITICAL --format table ${{ secrets.DOCKERHUB_USERNAME }}/aux-service:${{ github.run_number }}
