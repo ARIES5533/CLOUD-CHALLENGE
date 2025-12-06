@@ -99,5 +99,3 @@ async def retrieve_specific_ssm_parameter(name: str):
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail={"main_api_version": MAIN_SERVICE_VERSION, "error": "Auxiliary Service connection failed."}
         )
-
-# To run locally: uvicorn app.main:app --reload --port 8000

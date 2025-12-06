@@ -89,4 +89,3 @@ async def get_ssm_parameter(name: str):
         print(f"Error retrieving parameter '{name}': {e}")
         raise HTTPException(status_code=500, detail=format_response({"error": f"Failed to retrieve parameter '{name}'."}))
 
-# To run locally: uvicorn app.main:app --reload --port 8001
