@@ -18,8 +18,8 @@ spec:
       serviceAccountName: aux-service-sa
       containers:
       - name: aux-service
-        image: aux-service:1.0.0
-        imagePullPolicy: Never
+        image: aries5533/aux-service:7
+        imagePullPolicy: Always
         ports:
         - containerPort: 8001
         env:

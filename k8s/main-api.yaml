@@ -17,14 +17,12 @@ spec:
     spec:
       containers:
       - name: main-service
-        image: main-service:1.0.0
-        imagePullPolicy: Never
+        image: aries5533/main-service:7
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
         env:
         - name: MAIN_SERVICE_VERSION
           value: "1.0.0"
-        # Crucial Update: Use Fully Qualified Domain Name (FQDN)
-        # Format: <service-name>.<namespace>.svc.cluster.local
         - name: AUX_SERVICE_URL
           value: "http://aux-service.aux-service-ns:8001" # <--- COMMUNICATION LINK UPDATED
