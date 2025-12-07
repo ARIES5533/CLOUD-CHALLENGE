@@ -11,3 +11,12 @@ resources:
   - auxiliary-service/aux-service.yaml
   - main-api/main-api.yaml
   - main-api/main-service.yaml
+
+
+
+images:
+- name: ${{ env.DOCKER_USER }}/aux-service
+  newTag: placeholder 
+
+- name: ${{ env.DOCKER_USER }}/main-service
+  newTag: placeholder 

@@ -48,7 +48,7 @@ jobs:
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
 
-# --- GIT WRITEBACK (The New/Combined Step) ---
+# --- GIT WRITEBACK SETUP ---
       - name: Install Kustomize and Git Setup
         run: |
           # 1. Install Kustomize CLI
@@ -62,12 +62,16 @@ jobs:
       - name: Update Kustomize Manifests and Commit
         run: |
           TAG=${{ env.RUN_TAG }}
+          DOCKER_USER=${{ env.DOCKER_USER }} # Reference for clarity
+          
+          # 🚨 FIX 3: USE --kustomization flag (or cd) and REMOVE --path 🚨
+          # We use --kustomization k8s to target the file from the repository root
           
           # Update Auxiliary Service Image Tag
-          /usr/local/bin/kustomize edit set image ${{ env.DOCKER_USER }}/aux-service=${{ env.DOCKER_USER }}/aux-service:$TAG --path k8s 
+          /usr/local/bin/kustomize edit set image $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG --kustomization k8s
 
           # Update Main API Image Tag
-          /usr/local/bin/kustomize edit set image ${{ env.DOCKER_USER }}/main-service=${{ env.DOCKER_USER }}/main-service:$TAG --path k8s
+          /usr/local/bin/kustomize edit set image $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG --kustomization k8s
           
           # Commit the change
           git add k8s/kustomization.yaml
@@ -77,5 +81,6 @@ jobs:
             echo "No manifest changes. Skipping commit."
           else
             git commit -m "GitOps: Automated manifest update for tag ${TAG} [skip ci]"
+            # Use 'git push' without arguments to push to the checked-out branch
             git push
           fi
