@@ -25,7 +25,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: auxiliary-service-dev
+  name: cloud-challenge-gitops
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
