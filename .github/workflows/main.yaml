@@ -46,3 +46,36 @@ jobs:
           # Push both tags
           docker push ${MAIN_IMAGE}:latest
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
+
+
+# --- GIT WRITEBACK (The New/Combined Step) ---
+      - name: Install Kustomize and Git Setup
+        run: |
+          # 1. Install Kustomize CLI
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+          
+          # 2. Configure Git User for the commit
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+
+      - name: Update Kustomize Manifests and Commit
+        run: |
+          TAG=${{ env.RUN_TAG }}
+          
+          # Update Auxiliary Service Image Tag
+          /usr/local/bin/kustomize edit set image ${{ env.DOCKER_USER }}/aux-service=${{ env.DOCKER_USER }}/aux-service:$TAG --path k8s 
+
+          # Update Main API Image Tag
+          /usr/local/bin/kustomize edit set image ${{ env.DOCKER_USER }}/main-service=${{ env.DOCKER_USER }}/main-service:$TAG --path k8s
+          
+          # Commit the change
+          git add k8s/kustomization.yaml
+          
+          # Check if there are any changes before pushing to avoid error
+          if git diff --staged --quiet; then
+            echo "No manifest changes. Skipping commit."
+          else
+            git commit -m "GitOps: Automated manifest update for tag ${TAG} [skip ci]"
+            git push
+          fi
