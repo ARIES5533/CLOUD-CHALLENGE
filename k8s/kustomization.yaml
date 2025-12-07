@@ -1,3 +1,13 @@
+# FILE: k8s/kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Ensure your resources list points directly to the K8s manifest files
+# that are inside your two service directories.
 resources:
-- main-api
-- auxiliary-service
+  # This points to the Kustomization base or the YAML files inside the folders
+  - auxiliary-service/aux-api.yaml
+  - auxiliary-service/aux-service.yaml
+  - main-api/main-api.yaml
+  - main-api/main-service.yaml
