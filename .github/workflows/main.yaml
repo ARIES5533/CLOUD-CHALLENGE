@@ -62,25 +62,32 @@ jobs:
       - name: Update Kustomize Manifests and Commit
         run: |
           TAG=${{ env.RUN_TAG }}
-          DOCKER_USER=${{ env.DOCKER_USER }} # Reference for clarity
-          
-          # 🚨 FIX 3: USE --kustomization flag (or cd) and REMOVE --path 🚨
-          # We use --kustomization k8s to target the file from the repository root
-          
-          # Update Auxiliary Service Image Tag
-          /usr/local/bin/kustomize edit set image $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG --kustomization k8s
-
-          # Update Main API Image Tag
-          /usr/local/bin/kustomize edit set image $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG --kustomization k8s
-          
-          # Commit the change
-          git add k8s/kustomization.yaml
-          
-          # Check if there are any changes before pushing to avoid error
+          DOCKER_USER=${{ env.DOCKER_USER }}
+    
+    # 🚨 FIX: Change directory to the Kustomize base folder (k8s) 🚨
+          cd k8s
+    
+    # Update Auxiliary Service Image Tag
+    # Run the command WITHOUT any directory flags (no --path or --kustomization)
+          /usr/local/bin/kustomize edit set image $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG
+    
+    # Update Main API Image Tag
+          /usr/local/bin/kustomize edit set image $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG
+    
+    # Commit the change
+    # The file 'kustomization.yaml' is in the current 'k8s' directory
+          git add kustomization.yaml
+    
+    # 🚨 Important: Change back to the repository root before git commit/push 🚨
+          cd ..
+    
+    # Check if there are any changes before pushing to avoid error
           if git diff --staged --quiet; then
             echo "No manifest changes. Skipping commit."
           else
             git commit -m "GitOps: Automated manifest update for tag ${TAG} [skip ci]"
-            # Use 'git push' without arguments to push to the checked-out branch
+      # Use 'git push' without arguments to push to the checked-out branch
             git push
           fi
+
+      
