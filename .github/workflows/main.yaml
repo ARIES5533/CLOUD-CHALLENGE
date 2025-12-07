@@ -46,35 +46,3 @@ jobs:
           # Push both tags
           docker push ${MAIN_IMAGE}:latest
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
-
-  # trivy_scan:
-  #   name: Scan Docker Images for Vulnerabilities
-  #   needs: [docker_build]
-  #   runs-on: ubuntu-latest
-    
-  #   env:
-  #     DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-  #     RUN_TAG: ${{ github.run_number }}
-      
-  #   steps:
-
-  #     - name: Check out code
-  #       uses: actions/checkout@v3
-
-  #     - name: Scan Auxiliary Service Image (aux-service)
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-     
-  #         image-ref: ${{ env.DOCKER_USER }}/aux-service:${{ env.RUN_TAG }}
-  #         format: 'table'
-  #         severity: 'HIGH,CRITICAL'
-  #         scan-type: 'image'
-          
-  #     - name: Scan Main API Service Image (main-service)
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-
-  #         image-ref: ${{ env.DOCKER_USER }}/main-service:${{ env.RUN_TAG }}
-  #         format: 'table'
-  #         severity: 'HIGH,CRITICAL'
-  #         scan-type: 'image'
