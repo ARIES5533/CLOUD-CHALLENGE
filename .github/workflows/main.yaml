@@ -50,7 +50,7 @@ jobs:
 
 
   deploy:
-    needs: build  # Run deploy after build completes
+    needs: docker_build  # Run deploy after build completes
     runs-on: ubuntu-latest
 
     steps:
