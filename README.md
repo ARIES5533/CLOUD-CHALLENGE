@@ -1,6 +1,8 @@
 # GitOps Deployment on EKS
 This repository contains the complete, verified solution for the Cloud Engineer Challenge, demonstrating the design and deployment of a secure, production-ready microservices architecture using Terraform, EKS, and Argo CD driven by GitHub Actions.
 
+---
+
 ## Architectural Overview
 The application is deployed onto a dedicated EKS cluster and consists of a secure two-tier microservice architecture. Both services are configured for Burstable Quality of Service (QoS), ensuring stability and resource efficiency.
 ### Main API: 
@@ -12,6 +14,8 @@ The application is deployed onto a dedicated EKS cluster and consists of a secur
 
 ### 4. Resource Efficiency
 Both services are configured with Burstable QoS for optimal stability and cost efficiency.
+
+---
 
 ## Implementation Details
 
@@ -36,16 +40,35 @@ Terraform provisions:
 - A test S3 bucket  
 - An SSM parameter
 
-### 2. CI/CD & GitOps Automation
-The deployment process implements a closed-loop GitOps pattern to ensure the repository always reflects the deployed state, gi
-Closed-Loop Git Writeback: The GitHub Actions pipeline performs the Build, Push, and Manifest Update in sequence. It uses the Kustomize CLI to programmatically update the image tags in k8s/kustomization.yaml and commits the change back to the repository.
-Argo CD Sync: The manifest update commit immediately triggers Argo CD to detect the change, pull the new image tag, and synchronize the cluster, making GitHub the only source of truth.
-3. Stability and High Availability (HPA & PDB)
-The manifests are configured for production readiness, ensuring automatic scaling and protection against maintenance disruptions.
-Horizontal Pod Autoscaler (HPA): HPAs for both services scale the replicas based on CPU utilization, ensuring automatic resilience under varying traffic loads.
-Pod Disruption Budget (PDB): PDBs are configured with maxUnavailable: 1 for both services, guaranteeing that a quorum of pods remains available during planned cluster maintenance (e.g., node drains), thereby preventing service outages.
-Resource Management: All Deployments include accurate resource requests (for stable scheduling) and limits (to prevent resource contention), enforcing the Burstable QoS class.
+---
 
+### 2. CI/CD & GitOps Automation
+
+A fully automated closed-loop GitOps workflow is implemented.
+
+#### Closed-Loop Git Write-Back
+The GitHub Actions pipeline:
+1. Builds container images  
+2. Pushes them to the registry  
+3. Updates the `k8s/kustomization.yaml` image tags  
+4. Commits the changes back to the repository  
+
+This ensures the repository always reflects the deployed cluster state.
+
+#### Argo CD Sync
+When a manifest update is pushed:
+- Argo CD detects the change
+- Pulls the new image tag
+- Applies the update to the cluster automatically
+
+---
+
+## 3. Stability and High Availability (HPA & PDB)
+The manifests are configured for production readiness, ensuring automatic scaling and protection against maintenance disruptions.
+
+- Horizontal Pod Autoscaler (HPA): HPAs for both services scale the replicas based on CPU utilization, ensuring automatic resilience under varying traffic loads.
+- Pod Disruption Budget (PDB): PDBs are configured with maxUnavailable: 1 for both services, guaranteeing that a quorum of pods remains available during planned cluster maintenance (e.g., node drains), thereby preventing service outages.
+- Resource Management: All Deployments include accurate resource requests (for stable scheduling) and limits (to prevent resource contention), enforcing the Burstable QoS class.
 
 Deployment Instructions
 Prerequisites
