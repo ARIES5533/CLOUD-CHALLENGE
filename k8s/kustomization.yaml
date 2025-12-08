@@ -4,12 +4,12 @@ kind: Kustomization
 resources:
 - auxiliary-service/aux-api.yaml
 - auxiliary-service/aux-service.yaml
-- main-api/main-api.yaml
-- main-api/main-service.yaml
 - auxiliary-service/aux-service-hpa.yaml
-- auxiliary-service/aux-service.yaml
+- auxiliary-service/aux-service-pdb.yaml
 - main-api/main-api-hpa.yaml
 - main-api/main-api-pdb.yaml
+- main-api/main-api.yaml
+- main-api/main-service.yaml
 
 images:
 - name: ${{ env.DOCKER_USER }}/aux-service
