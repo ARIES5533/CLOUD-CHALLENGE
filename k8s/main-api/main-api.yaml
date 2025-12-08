@@ -25,4 +25,12 @@ spec:
         - name: MAIN_SERVICE_VERSION
           value: "1.0.0"
         - name: AUX_SERVICE_URL
-          value: "http://aux-service.aux-service-ns:8001" # <--- COMMUNICATION LINK UPDATED
+          value: "http://aux-service.aux-service-ns:8001"
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "400m"
+            memory: "384Mi"
