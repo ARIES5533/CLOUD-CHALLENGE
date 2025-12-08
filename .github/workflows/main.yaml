@@ -48,41 +48,25 @@ jobs:
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
 
-# # --- GIT WRITEBACK SETUP ---
-#       - name: Install Kustomize and Git Setup
-#         run: |
-#           # 1. Install Kustomize CLI
-#           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-#           sudo mv kustomize /usr/local/bin/
-          
-#           # 2. Configure Git User for the commit
-#           git config user.name github-actions[bot]
-#           git config user.email github-actions[bot]@users.noreply.github.com
+# --- Optimized Git Writeback ---
 
-#       - name: Update Kustomize Manifests and Commit
-#         run: |
-#           TAG=${{ env.RUN_TAG }}
-#           DOCKER_USER=${{ env.DOCKER_USER }} # Reference for clarity
-          
-#           # 🚨 FIX 3: USE --kustomization flag (or cd) and REMOVE --path 🚨
-#           # We use --kustomization k8s to target the file from the repository root
-#           cd k8s
-#           # Update Auxiliary Service Image Tag
-#           /usr/local/bin/kustomize edit set image $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG --kustomization k8s
+      # 1. Update Manifest using Kustomize CLI
+      # This step automatically handles Kustomize installation and file modification.
+      - name: Update Kustomize Manifests
+        uses: sst/kustomize-action@v1 # A light-weight action to run Kustomize commands
+        with:
+          kustomization-path: k8s # The directory containing kustomization.yaml
+          command: edit set image ${{ env.DOCKER_USER }}/aux-service=${{ env.DOCKER_USER }}/aux-service:${{ env.RUN_TAG }} ${{ env.DOCKER_USER }}/main-service=${{ env.DOCKER_USER }}/main-service:${{ env.RUN_TAG }}
 
-#           # Update Main API Image Tag
-#           /usr/local/bin/kustomize edit set image $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG --kustomization k8s
-          
-#           # Commit the change
-#           git add k8s/kustomization.yaml
-          
-#           cd ..
-          
-#           # Check if there are any changes before pushing to avoid error
-#           if git diff --staged --quiet; then
-#             echo "No manifest changes. Skipping commit."
-#           else
-#             git commit -m "GitOps: Automated manifest update for tag ${TAG} [skip ci]"
-#             # Use 'git push' without arguments to push to the checked-out branch
-#             git push
-#           fi
+      # 2. Commit and Push using a dedicated action
+      # This action handles configuration and pushing cleanly.
+      - name: Commit and Push Manifest Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # Only commit the manifest file
+          commit_files: k8s/kustomization.yaml
+          commit_message: "GitOps: Automated manifest update for tag ${{ env.RUN_TAG }} [skip ci]"
+          # Use the GITHUB_TOKEN (created by the runner) for authentication
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Ensures this commit doesn't trigger a new pipeline run (optional but recommended)
+          skip_ci: true

@@ -44,7 +44,6 @@ metadata:
   name: cloud-challenge-gitops
   namespace: argocd
   annotations:
-    # 🚨 Add this line to override the global 180s (3-minute) polling interval 🚨
     argocd.argoproj.io/repo-status-check-interval: "30s"
     
 spec:
@@ -59,7 +58,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: ""   # Let Kustomize manage namespaces
+    namespace: ""
 
   ignoreDifferences:
     - group: ""
