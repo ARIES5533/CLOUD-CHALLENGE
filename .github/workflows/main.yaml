@@ -48,23 +48,40 @@ jobs:
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
 
-# 1. Update Manifest using Kustomize CLI
-      - name: Update Kustomize Manifests
-        # 🚨 CHANGE THIS ACTION 🚨
-        uses: fluxcd/kustomize-action@v2 
-        with:
-          path: k8s # The directory containing kustomization.yaml
-          # Use the 'kustomize edit set image' command directly
-          command: edit set image ${{ env.DOCKER_USER }}/aux-service=${{ env.DOCKER_USER }}/aux-service:${{ env.RUN_TAG }} ${{ env.DOCKER_USER }}/main-service=${{ env.DOCKER_USER }}/main-service:${{ env.RUN_TAG }}
+# ... (Existing Build and Push steps remain here) ...
 
-      # 2. Commit and Push using a dedicated action
+      # --- 1. Install Kustomize and Configure Git ---
+      - name: Install Kustomize CLI
+        # Download and install the Kustomize binary directly, ensuring reliability.
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      # 2. Update Manifests using Manual Script
+      - name: Update Kustomize Manifests
+        run: |
+          TAG=${{ env.RUN_TAG }}
+          DOCKER_USER=${{ env.DOCKER_USER }}
+          
+          # Change directory to the Kustomize base folder to find kustomization.yaml
+          cd k8s
+          
+          # Update both images. This relies on the working cd k8s trick.
+          /usr/local/bin/kustomize edit set image \
+            $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG \
+            $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG
+          
+          # Change back to the repository root for the commit action
+          cd ..
+          
+      # 3. Commit and Push using a dedicated action
       - name: Commit and Push Manifest Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # Only commit the manifest file
+          # Only commit the modified file
           commit_files: k8s/kustomization.yaml
+          # Use a standard bot user for the commit
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
           commit_message: "GitOps: Automated manifest update for tag ${{ env.RUN_TAG }} [skip ci]"
-          # Use the GITHUB_TOKEN (created by the runner) for authentication
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Ensures this commit doesn't trigger a new pipeline run (optional but recommended)
-          skip_ci: true
