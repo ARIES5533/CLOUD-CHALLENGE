@@ -110,7 +110,7 @@ The Main API endpoints are used to verify the secure, credential-less integratio
 This confirms the Auxiliary Service's IAM Role has the necessary s3:ListAllMyBuckets permission.
 Request:
 
-curl -X GET http://<EXTERNAL-IP>/s3/buckets
+curl -X GET http://EXTERNAL-IP/s3/buckets
 #### Expected Response (JSON body):
 JSON
 {
@@ -125,7 +125,7 @@ JSON
 This confirms the Auxiliary Service's IAM Role has the necessary ssm:GetParameter permission.
 Request:
 
-curl -X GET http://<EXTERNAL-IP>/ssm/parameter/app/database/password
+curl -X GET http://EXTERNAL-IP/ssm/parameter/app/database/password
 
 {
   "main_api_version": "",
@@ -136,7 +136,7 @@ curl -X GET http://<EXTERNAL-IP>/ssm/parameter/app/database/password
   }
 }
 
-curl -X GET http://<EXTERNAL-IP>/ssm/parameter
+curl -X GET http://EXTERNAL-IP/ssm/parameter
 
 #### Expected Response (JSON body):
 JSON
