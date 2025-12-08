@@ -48,8 +48,6 @@ jobs:
           docker push ${MAIN_IMAGE}:latest
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
-
-  # Install Kustomize CLI
       - name: Install Kustomize CLI
         run: |
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
