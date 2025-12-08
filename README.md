@@ -12,14 +12,14 @@ The application is deployed onto a dedicated EKS cluster and consists of a secur
 ### GitOps: 
 - Argo CD acts as the single source of truth, managing the cluster state by observing the k8s directory in this repository.
 
-### 4. Resource Efficiency
-Both services are configured with Burstable QoS for optimal stability and cost efficiency.
+### Resource Efficiency:
+- Both services are configured with Burstable QoS for optimal stability and cost efficiency.
 
 ---
 
 ## Implementation Details
 
-1. Security & Infrastructure (IRSA)
+### 1. Security & Infrastructure (IRSA)
 Infrastructure is defined using Terraform, focused on security and enablement within the EKS environment.
 
 #### IAM Roles for Service Accounts (IRSA)
