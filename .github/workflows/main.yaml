@@ -11,7 +11,8 @@ jobs:
     name: Build & Push Services to DockerHub
     environment: test
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
     env:
       DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
       RUN_TAG: ${{ github.run_number }}
@@ -48,40 +49,34 @@ jobs:
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
 
-# ... (Existing Build and Push steps remain here) ...
+  deploy:
+    needs: build  # Run deploy after build completes
+    runs-on: ubuntu-latest
 
-      # --- 1. Install Kustomize and Configure Git ---
-      - name: Install Kustomize CLI
-        # Download and install the Kustomize binary directly, ensuring reliability.
-        run: |
-          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
-          sudo mv kustomize /usr/local/bin/
-
-      # 2. Update Manifests using Manual Script
-      - name: Update Kustomize Manifests
-        run: |
-          TAG=${{ env.RUN_TAG }}
-          DOCKER_USER=${{ env.DOCKER_USER }}
-          
-          # Change directory to the Kustomize base folder to find kustomization.yaml
-          cd k8s
-          
-          # Update both images. This relies on the working cd k8s trick.
-          /usr/local/bin/kustomize edit set image \
-            $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG \
-            $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG
-          
-          # Change back to the repository root for the commit action
-          cd ..
-          
-      # 3. Commit and Push using a dedicated action
-      - name: Commit and Push Manifest Changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # Checkout repo again for deploy step
         with:
-          # Only commit the modified file
-          commit_files: k8s/kustomization.yaml
-          # Use a standard bot user for the commit
-          commit_user_name: github-actions[bot]
-          commit_user_email: github-actions[bot]@users.noreply.github.com
-          commit_message: "GitOps: Automated manifest update for tag ${{ env.RUN_TAG }} [skip ci]"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          fetch-depth: 0  # Full history for ArgoCD
+
+      - name: Install kubectl
+        run: |
+          curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.7/2024-12-12/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl  # Download and install kubectl CLI
+
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/argocd  # Download and install ArgoCD CLI
+
+      - name: Login to ArgoCD
+        run: |
+          argocd login ${{ secrets.ARGOCD_SERVER }} \
+            --username ${{ secrets.ARGOCD_USERNAME }} \
+            --password ${{ secrets.ARGOCD_PASSWORD }} \
+            --insecure  # Authenticate to ArgoCD server
+
+        
