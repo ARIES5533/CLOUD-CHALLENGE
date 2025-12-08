@@ -67,7 +67,7 @@ When a manifest update is pushed:
 The manifests are configured for production readiness, ensuring automatic scaling and protection against maintenance disruptions.
 
 - Horizontal Pod Autoscaler (HPA): HPAs for both services scale the replicas based on CPU utilization, ensuring automatic resilience under varying traffic loads.
-- Pod Disruption Budget (PDB): PDBs are configured with maxUnavailable: 1 for both services, guaranteeing that a quorum of pods remains available during planned cluster maintenance (e.g., node drains), thereby preventing service outages.
+- Pod Disruption Budget (PDB): PDBs are configured with `maxUnavailable: 1` for both services, guaranteeing that a quorum of pods remains available during planned cluster maintenance (e.g., node drains), thereby preventing service outages.
 - Resource Management: All Deployments include accurate resource requests (for stable scheduling) and limits (to prevent resource contention), enforcing the Burstable QoS class.
 
 ## Deployment Instructions
@@ -76,19 +76,19 @@ EKS Cluster provisioned with OIDC enabled.
 Argo CD deployed to the cluster.
 
 ### Step 1: 
-Create namespaces on the cluster as the next step depends on it (main-service-ns, aux-service-ns)
+Create namespaces on the cluster as the next step depends on it (`main-service-ns`, `aux-service-ns`)
 ### Step 2: Deploy Infrastructure (Terraform Code)
 Deploy the required application services and security components (IRSA, S3, SSM) into the existing EKS environment.
 
 cd terraform-scripts/
-`terraform init`
-`terraform plan`
-`terraform apply`
+- `terraform init`
+- `terraform plan`
+- `terraform apply`
 
 ### Step 3: Configure Argo CD Application
 Apply the Argo CD Application manifest to begin cluster synchronization.
 Run command from the root directory:
-kubectl apply -f application.yaml -n argocd
+`kubectl apply -f application.yaml -n argocd`
 
 ### Step 4: Verify Deployment Success
 #### Argo CD Check: 
@@ -96,7 +96,7 @@ Confirm the cloud-challenge-app (or your application name) shows Synced and Heal
 #### API URL: 
 Retrieve the external URL for the LoadBalancer service:
 
-kubectl get svc main-service-lb -n main-service-ns
+`kubectl get svc main-service-lb -n main-service-ns`
 
 The EXTERNAL-IP is your base URL for testing.
 
@@ -109,7 +109,7 @@ The Main API endpoints are used to verify the secure, credential-less integratio
 This confirms the Auxiliary Service's IAM Role has the necessary s3:ListAllMyBuckets permission.
 Request:
 
-curl -X GET http://EXTERNAL-IP/s3/buckets
+`curl -X GET http://EXTERNAL-IP/s3/buckets`
 #### Expected Response (JSON body):
 JSON
 {
@@ -124,7 +124,7 @@ JSON
 This confirms the Auxiliary Service's IAM Role has the necessary ssm:GetParameter permission.
 Request:
 
-curl -X GET http://EXTERNAL-IP/ssm/parameter/app/database/password
+`curl -X GET http://EXTERNAL-IP/ssm/parameter/app/database/password`
 
 {
   "main_api_version": "",
@@ -135,7 +135,7 @@ curl -X GET http://EXTERNAL-IP/ssm/parameter/app/database/password
   }
 }
 
-curl -X GET http://EXTERNAL-IP/ssm/parameter
+`curl -X GET http://EXTERNAL-IP/ssm/parameter`
 
 #### Expected Response (JSON body):
 JSON
