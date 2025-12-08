@@ -22,7 +22,7 @@ images:
   newTag: placeholder
 - name: aries5533/aux-service
   newName: aries5533/aux-service
-  newTag: "39"
+  newTag: "40"
 - name: aries5533/main-service
   newName: aries5533/main-service
-  newTag: "39"
+  newTag: "40"
