@@ -48,18 +48,16 @@ jobs:
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
 
-# --- Optimized Git Writeback ---
-
-      # 1. Update Manifest using Kustomize CLI
-      # This step automatically handles Kustomize installation and file modification.
+# 1. Update Manifest using Kustomize CLI
       - name: Update Kustomize Manifests
-        uses: sst/kustomize-action@v1 # A light-weight action to run Kustomize commands
+        # 🚨 CHANGE THIS ACTION 🚨
+        uses: fluxcd/kustomize-action@v2 
         with:
-          kustomization-path: k8s # The directory containing kustomization.yaml
+          path: k8s # The directory containing kustomization.yaml
+          # Use the 'kustomize edit set image' command directly
           command: edit set image ${{ env.DOCKER_USER }}/aux-service=${{ env.DOCKER_USER }}/aux-service:${{ env.RUN_TAG }} ${{ env.DOCKER_USER }}/main-service=${{ env.DOCKER_USER }}/main-service:${{ env.RUN_TAG }}
 
       # 2. Commit and Push using a dedicated action
-      # This action handles configuration and pushing cleanly.
       - name: Commit and Push Manifest Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
