@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: main-pdb
+  namespace: main-service-ns
+spec:
+  maxUnavailable: 1 
+  selector:
+    matchLabels:
+      app: main-service

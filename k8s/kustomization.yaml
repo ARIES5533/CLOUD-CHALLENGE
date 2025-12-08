@@ -1,19 +1,15 @@
-# FILE: k8s/kustomization.yaml
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Ensure your resources list points directly to the K8s manifest files
-# that are inside your two service directories.
-  # This points to the Kustomization base or the YAML files inside the folders
 resources:
 - auxiliary-service/aux-api.yaml
 - auxiliary-service/aux-service.yaml
 - main-api/main-api.yaml
 - main-api/main-service.yaml
-
-
-
+- auxiliary-service/aux-service-hpa.yaml
+- auxiliary-service/aux-service.yaml
+- main-api/main-api-hpa.yaml
+- main-api/main-api-pdb.yaml
 
 images:
 - name: ${{ env.DOCKER_USER }}/aux-service

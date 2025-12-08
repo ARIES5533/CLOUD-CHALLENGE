@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: aux-pdb
+  namespace: aux-service-ns
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: aux-service
