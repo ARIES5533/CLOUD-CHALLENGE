@@ -49,34 +49,30 @@ jobs:
           docker push ${MAIN_IMAGE}:${{ env.RUN_TAG }}
 
 
-  deploy:
-    needs: docker_build  # Run deploy after build completes
-    runs-on: ubuntu-latest
+  # Install Kustomize CLI
+      - name: Install Kustomize CLI
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3  # Checkout repo again for deploy step
+      # Update Manifests
+      - name: Update Kustomize Manifests
+        run: |
+          TAG=${{ env.RUN_TAG }}
+          DOCKER_USER=${{ env.DOCKER_USER }}
+          
+          cd k8s
+          /usr/local/bin/kustomize edit set image \
+            $DOCKER_USER/aux-service=$DOCKER_USER/aux-service:$TAG \
+            $DOCKER_USER/main-service=$DOCKER_USER/main-service:$TAG
+          
+          cd ..
+          
+      # Commit and Push the Manifest Change
+      - name: Commit and Push Manifest Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          fetch-depth: 0  # Full history for ArgoCD
-
-      - name: Install kubectl
-        run: |
-          curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.30.7/2024-12-12/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl  # Download and install kubectl CLI
-
-      - name: Install ArgoCD CLI
-        run: |
-          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x argocd
-          sudo mv argocd /usr/local/bin/argocd  # Download and install ArgoCD CLI
-
-      - name: Login to ArgoCD
-        run: |
-          argocd login ${{ secrets.ARGOCD_SERVER }} \
-            --username ${{ secrets.ARGOCD_USERNAME }} \
-            --password ${{ secrets.ARGOCD_PASSWORD }} \
-            --insecure  # Authenticate to ArgoCD server
-
-        
+          file_pattern: k8s/kustomization.yaml
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: "GitOps: Automated manifest update for tag ${{ env.RUN_TAG }} [skip ci]"
