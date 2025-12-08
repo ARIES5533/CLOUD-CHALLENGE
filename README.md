@@ -19,7 +19,7 @@ The application is deployed onto a dedicated EKS cluster and consists of a secur
 
 ## Implementation Details
 
-### 1. Security & Infrastructure (IRSA)
+## 1. Security & Infrastructure (IRSA)
 Infrastructure is defined using Terraform, focused on security and enablement within the EKS environment.
 
 #### IAM Roles for Service Accounts (IRSA)
@@ -42,7 +42,7 @@ Terraform provisions:
 
 ---
 
-### 2. CI/CD & GitOps Automation
+## 2. CI/CD & GitOps Automation
 
 A fully automated closed-loop GitOps workflow is implemented.
 
@@ -77,8 +77,7 @@ Argo CD deployed to the cluster.
 
 ### Step 1: 
 Create namespaces on the cluster as the next step depends on it (main-service-ns, aux-service-ns)
-### Step 2: 
-Deploy Infrastructure (Terraform Code)
+### Step 2: Deploy Infrastructure (Terraform Code)
 Deploy the required application services and security components (IRSA, S3, SSM) into the existing EKS environment.
 
 cd terraform-scripts/
@@ -86,12 +85,12 @@ cd terraform-scripts/
 `terraform plan`
 `terraform apply`
 
-### Step 2: Configure Argo CD Application
+### Step 3: Configure Argo CD Application
 Apply the Argo CD Application manifest to begin cluster synchronization.
 Run command from the root directory:
 kubectl apply -f application.yaml -n argocd
 
-### Step 3: Verify Deployment Success
+### Step 4: Verify Deployment Success
 #### Argo CD Check: 
 Confirm the cloud-challenge-app (or your application name) shows Synced and Healthy in the Argo CD UI/CLI.
 #### API URL: 
