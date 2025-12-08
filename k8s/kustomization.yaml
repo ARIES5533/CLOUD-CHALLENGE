@@ -5,18 +5,24 @@ kind: Kustomization
 
 # Ensure your resources list points directly to the K8s manifest files
 # that are inside your two service directories.
-resources:
   # This points to the Kustomization base or the YAML files inside the folders
-  - auxiliary-service/aux-api.yaml
-  - auxiliary-service/aux-service.yaml
-  - main-api/main-api.yaml
-  - main-api/main-service.yaml
+resources:
+- auxiliary-service/aux-api.yaml
+- auxiliary-service/aux-service.yaml
+- main-api/main-api.yaml
+- main-api/main-service.yaml
+
 
 
 
 images:
 - name: ${{ env.DOCKER_USER }}/aux-service
-  newTag: placeholder 
-
+  newTag: placeholder
 - name: ${{ env.DOCKER_USER }}/main-service
-  newTag: placeholder 
+  newTag: placeholder
+- name: aries5533/aux-service
+  newName: aries5533/aux-service
+  newTag: "39"
+- name: aries5533/main-service
+  newName: aries5533/main-service
+  newTag: "39"
