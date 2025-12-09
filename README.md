@@ -89,8 +89,8 @@ cd terraform-scripts/
 Instal and Apply the Argo CD Application manifest to begin cluster synchronization.
 
 #### To install:
-`kubectl create namespace argocd`
-`kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+- `kubectl create namespace argocd`
+- `kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
 
 #### To apply the Argo CD Application manifest:
 Run command from the root directory:
