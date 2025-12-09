@@ -1,5 +1,5 @@
 # GitOps Deployment on EKS
-This repository contains the complete, verified solution for the Cloud Engineer Challenge, demonstrating the design and deployment of a secure, production-ready microservices architecture using Terraform, EKS, and Argo CD driven by GitHub Actions.
+This repository contains the complete solution, demonstrating the design and deployment of a secure, production-ready microservices architecture using Terraform, EKS, and Argo CD driven by GitHub Actions.
 
 ---
 
@@ -86,7 +86,13 @@ cd terraform-scripts/
 - `terraform apply`
 
 ### Step 3: Configure Argo CD Application
-Apply the Argo CD Application manifest to begin cluster synchronization.
+Instal and Apply the Argo CD Application manifest to begin cluster synchronization.
+
+#### To install:
+`kubectl create namespace argocd`
+`kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+
+#### To apply the Argo CD Application manifest:
 Run command from the root directory:
 `kubectl apply -f application.yaml -n argocd`
 

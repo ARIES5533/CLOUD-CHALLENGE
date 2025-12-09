@@ -25,6 +25,6 @@ variable "namespace" {
 variable "cluster_name" {
   description = "The AWS region to deploy resources into."
   type        = string
-  default     = "cloud-challenge-cluster"
+  default     = "cloud-challenge"
 }
 ##################################

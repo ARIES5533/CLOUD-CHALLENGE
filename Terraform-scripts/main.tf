@@ -1,4 +1,14 @@
 
+data "aws_eks_cluster" "eks" {
+  name = var.cluster_name
+}
+
+
+data "aws_eks_cluster_auth" "eks" {
+  name = var.cluster_name
+}
+
+
 module "ssm" {
   source       = "./modules/ssm_parameters"
   project_name = var.project_name
@@ -11,6 +21,9 @@ module "aux_service_storage" {
   bucket_name  = "cloud-challenge-bucket5533"
   project_name = var.project_name
 }
+
+
+
 
 module "aux_api_irsa" {
   source = "./modules/irsa"
