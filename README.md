@@ -1,7 +1,7 @@
 ![System Architecture Diagram](CLOUD-CHALLENGE/Architectural-design/cloud-challenge.jpeg)
 
 # GitOps Deployment on EKS
-This repository contains the complete solution, demonstrating the design and deployment of a secure, production-ready microservices architecture using Terraform, EKS, and Argo CD driven by GitHub Actions.
+This repository contains the complete solution, demonstrating the design and deployment of a secure, production-ready microservice architecture using Terraform, EKS, and Argo CD driven by GitHub Actions.
 
 ---
 
