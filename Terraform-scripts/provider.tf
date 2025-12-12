@@ -1,4 +1,4 @@
-# providers.tf (Root Directory)
+# providers.tf
 
 terraform {
   required_providers {
@@ -13,7 +13,7 @@ terraform {
   }
    
   backend "s3" {
-    bucket  = "cloud-challenge-tf-state"
+    bucket  = ""
     key     = "backend-config/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
