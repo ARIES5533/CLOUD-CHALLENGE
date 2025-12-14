@@ -1,3 +1,9 @@
+variable "project_name" {
+  description = "A unique name for the project, used as a prefix for resources."
+  type        = string
+  default     = "cloud-challenge"
+}
+
 variable "aws_region" {
   description = "The AWS region to deploy resources into."
   type        = string
