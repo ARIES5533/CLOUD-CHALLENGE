@@ -14,7 +14,7 @@ resources:
 images:
 - name: aries5533/aux-service
   newName: aries5533/aux-service
-  newTag: "61"
+  newTag: "65"
 - name: aries5533/main-service
   newName: aries5533/main-service
-  newTag: "61"
+  newTag: "65"
