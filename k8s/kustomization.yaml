@@ -12,10 +12,6 @@ resources:
 - main-api/main-service.yaml
 
 images:
-- name: ${{ env.DOCKER_USER }}/aux-service
-  newTag: placeholder
-- name: ${{ env.DOCKER_USER }}/main-service
-  newTag: placeholder
 - name: aries5533/aux-service
   newName: aries5533/aux-service
   newTag: "61"
